@@ -70,13 +70,4 @@ To manually compile and build the static files to the `out/` folder:
 npm run build
 ```
 
----
-
-## 🌎 Deployment to GitHub Pages
-
-The project is fully preconfigured for GitHub Pages static deployment:
-1. Push your changes to the `main` branch.
-2. The GitHub Action in `.github/workflows/deploy.yml` will automatically build and push the compiled assets to the `gh-pages` branch.
-3. In your GitHub repository, go to **Settings > Pages**.
-4. Set the **Build and deployment** source to `Deploy from a branch` and select `gh-pages` as the deployment branch.
-5. Save, and your app will be live at `https://<your-username>.github.io/CompTIA-Sec-Test/`.
+Try it here: [https://therohantilwani.github.io/CompTIA-Sec-Test/](https://therohantilwani.github.io/CompTIA-Sec-Test/)
