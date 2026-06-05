@@ -124,7 +124,7 @@ export default function ExamQuestion({ question, selectedAnswer, showResult, onA
                 <span className={`flex-shrink-0 w-6 h-6 rounded-full border flex items-center justify-center text-[10px] font-black uppercase font-mono transition-all ${badgeStyle}`}>
                   {answer.id}
                 </span>
-                <span className="text-sm font-semibold leading-relaxed pt-0.5">{answer.text}</span>
+                <span className="text-[15px] font-semibold leading-relaxed pt-0.5">{answer.text}</span>
                 {showResult && answer.isCorrect && (
                   <span className="ml-auto flex-shrink-0 text-[10px] font-bold text-emerald-400 uppercase tracking-widest pt-0.5">✓ Correct</span>
                 )}
