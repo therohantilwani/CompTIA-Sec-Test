@@ -10,16 +10,10 @@ import Logo from "@/components/Logo"
 import ThemeToggle from "@/components/ThemeToggle"
 import { loadClientQuestions, fetchQuestionsFromInternet } from "@/lib/questions-loader"
 import { questionBank } from "@/lib/questions-bank"
-import { getPerformance, updatePerformance, getDomainAccuracy, getDomainStreak, getAnsweredCorrectIds, markAnsweredCorrect, markAnswered, getAllAnsweredIds, getSeenTopics, markTopicSeen } from "@/lib/performance"
+import { getPerformance, updatePerformance, getDomainAccuracy, getDomainStreak, getAnsweredCorrectIds, markAnsweredCorrect, markAnswered, getAllAnsweredIds, markTopicSeen } from "@/lib/performance"
 import { SY0_701_WEIGHTAGE, calculateWeightageProgress, getNextRecommendedDomain } from "@/lib/weightage"
 
-const domainColors: Record<string, string> = {
-  "General Security Concepts": "bg-blue-500/10 text-blue-400 border-blue-500/20",
-  "Threats, Vulnerabilities, and Mitigations": "bg-red-500/10 text-red-400 border-red-500/20",
-  "Security Architecture": "bg-purple-500/10 text-purple-400 border-purple-500/20",
-  "Security Operations": "bg-green-500/10 text-green-400 border-green-500/20",
-  "Security Program Management and Oversight": "bg-orange-500/10 text-orange-400 border-orange-500/20",
-}
+
 
 const domainChartColors: Record<string, string> = {
   "General Security Concepts": "#3b82f6",
@@ -57,7 +51,9 @@ export default function ExamPage() {
   const prevDomainRef = useRef<string | null>(null)
   const wrongQuestionRef = useRef<Question | null>(null)
   
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const weightageProgress = useMemo(() => calculateWeightageProgress(getPerformance()), [questions, answers])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const nextDomain = useMemo(() => getNextRecommendedDomain(getPerformance()), [questions, answers])
   
   const spiderData = useMemo(() => {
@@ -74,6 +70,7 @@ export default function ExamPage() {
         color: domainChartColors[w.domain] ?? "#6366f1",
       }
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [questions, answers])
 
   useEffect(() => {
@@ -133,7 +130,7 @@ export default function ExamPage() {
         setReinforceLoading(false)
         return
       }
-    } catch (e) {
+    } catch {
       console.log("Ollama AI reinforcement endpoint unavailable, falling back to static questions pool")
     }
 
@@ -254,14 +251,14 @@ export default function ExamPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950 text-slate-100 relative">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-indigo-500/10 rounded-full blur-3xl opacity-60 pointer-events-none" />
+      <div className="min-h-screen flex items-center justify-center bg-theme-gradient text-foreground relative">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-indigo-500/5 dark:bg-indigo-500/10 rounded-full blur-3xl opacity-60 pointer-events-none" />
         <div className="text-center relative z-10 space-y-4">
           {loadingError ? (
-            <div className="p-6 max-w-md bg-slate-900/60 border border-rose-500/20 rounded-2xl shadow-xl">
+            <div className="p-6 max-w-md theme-card backdrop-blur-xl border border-rose-500/20 rounded-2xl shadow-xl">
               <div className="text-4xl mb-3">⚠️</div>
               <p className="text-rose-400 font-bold mb-2">Questions Sync Failed</p>
-              <p className="text-xs text-slate-400 mb-4">{loadingError}</p>
+              <p className="text-xs theme-text-muted mb-4">{loadingError}</p>
               <button
                 onClick={() => {
                   setLoading(true)
@@ -276,7 +273,7 @@ export default function ExamPage() {
           ) : (
             <div className="space-y-4">
               <div className="animate-spin h-8 w-8 border-4 border-indigo-500 border-t-transparent rounded-full mx-auto" />
-              <p className="text-slate-400 text-xs font-semibold tracking-widest uppercase">Syncing Live SY0-701 Exam Deck...</p>
+              <p className="theme-text-muted text-xs font-semibold tracking-widest uppercase">Syncing Live SY0-701 Exam Deck...</p>
             </div>
           )}
         </div>
@@ -290,7 +287,7 @@ export default function ExamPage() {
       <div className="absolute inset-0 bg-theme-grid [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-40 pointer-events-none" />
       
       <header className="theme-nav backdrop-blur-md relative z-10">
-        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="max-w-5xl mx-auto px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Logo size={28} className="cursor-pointer hover:scale-105 transition-all" onClick={() => router.push("/")} />
             <div className="flex flex-col">
@@ -299,7 +296,7 @@ export default function ExamPage() {
             </div>
           </div>
           
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4 w-full sm:w-auto sm:justify-end">
             <ThemeToggle />
             <div className="text-xs font-mono font-bold theme-text-muted">
               Q: {currentIndex + 1} / {questions.length}
@@ -331,7 +328,7 @@ export default function ExamPage() {
 
             <button
               onClick={() => router.push("/")}
-              className="text-xs theme-text-muted hover:text-foreground font-semibold transition-colors cursor-pointer"
+              className="text-xs theme-text-muted hover:text-foreground font-semibold transition-colors cursor-pointer ml-auto sm:ml-0"
             >
               Exit
             </button>
@@ -558,10 +555,10 @@ export default function ExamPage() {
             {/* Reinforcement Questions */}
             {showReinforce && mode === "study" && reinforceQuestions.length > 0 && (
               <div className="mt-8 space-y-4">
-                <div className="flex items-center gap-2 border-b border-white/5 pb-2">
+                <div className="flex items-center gap-2 border-b theme-border pb-2">
                   <span className="text-lg">🔄</span>
-                  <h3 className="font-bold text-white text-xs tracking-wider uppercase">Reinforce Your Understanding</h3>
-                  <span className="text-[10px] text-slate-500 font-mono">Review session for wrong answer</span>
+                  <h3 className="font-bold text-foreground text-xs tracking-wider uppercase">Reinforce Your Understanding</h3>
+                  <span className="text-[10px] theme-text-muted font-mono">Review session for wrong answer</span>
                 </div>
                 <div className="space-y-6">
                   {reinforceQuestions.map((rq) => {
@@ -582,9 +579,9 @@ export default function ExamPage() {
             )}
 
             {reinforceLoading && mode === "study" && showReinforce && (
-              <div className="mt-6 p-4 bg-indigo-950/20 rounded-xl border border-indigo-500/20 flex items-center gap-3">
+              <div className="mt-6 p-4 bg-indigo-500/5 dark:bg-indigo-950/20 rounded-xl border border-indigo-500/15 dark:border-indigo-500/20 flex items-center gap-3">
                 <div className="animate-spin h-5 w-5 border-2 border-indigo-500 border-t-transparent rounded-full" />
-                <span className="text-xs text-indigo-300 font-bold">AI Tutor Generating Reinforce Questions...</span>
+                <span className="text-xs text-indigo-650 dark:text-indigo-300 font-bold">AI Tutor Generating Reinforce Questions...</span>
               </div>
             )}
           </div>
@@ -635,10 +632,10 @@ export default function ExamPage() {
             <button
               onClick={handleSubmit}
               disabled={!allAnswered}
-              className={`px-6 py-2.5 text-xs font-bold rounded-xl text-white transition-all ${
+              className={`px-6 py-2.5 text-xs font-bold rounded-xl transition-all ${
                 allAnswered
-                  ? "bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 hover:scale-105 hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] active:scale-95 cursor-pointer"
-                  : "bg-slate-800 border border-white/5 text-slate-500 cursor-not-allowed"
+                  ? "bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 hover:scale-105 hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] active:scale-95 text-white cursor-pointer"
+                  : "bg-slate-100 dark:bg-slate-850 border theme-border text-slate-400 dark:text-slate-500 cursor-not-allowed"
               }`}
             >
               {mode === "exam" ? "Submit Exam" : "Finish Session"} ({questions.length - answeredCount} unanswered)

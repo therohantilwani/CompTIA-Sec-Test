@@ -7,11 +7,9 @@ export default function ThemeToggle() {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
     const saved = localStorage.getItem("theme") as "light" | "dark" | null
     const initial = saved || "dark"
     
-    setTheme(initial)
     if (initial === "dark") {
       document.documentElement.classList.add("dark")
       document.documentElement.classList.remove("light")
@@ -19,6 +17,11 @@ export default function ThemeToggle() {
       document.documentElement.classList.remove("dark")
       document.documentElement.classList.add("light")
     }
+
+    setTimeout(() => {
+      setMounted(true)
+      setTheme(initial)
+    }, 0)
   }, [])
 
   const toggleTheme = () => {

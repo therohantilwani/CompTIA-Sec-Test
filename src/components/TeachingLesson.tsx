@@ -21,7 +21,7 @@ function renderMarkdown(text: string) {
     if (boldRegex.test(line)) {
       const parts = line.split(/\*\*(.*?)\*\*/g)
       content = parts.map((part, i) => 
-        i % 2 === 1 ? <strong key={i} className="text-amber-300 font-bold">{part}</strong> : part
+        i % 2 === 1 ? <strong key={i} className="text-amber-600 dark:text-amber-300 font-bold">{part}</strong> : part
       )
     }
 
@@ -32,18 +32,18 @@ function renderMarkdown(text: string) {
       if (boldRegex.test(cleaned)) {
         const parts = cleaned.split(/\*\*(.*?)\*\*/g)
         itemContent = parts.map((part, i) => 
-          i % 2 === 1 ? <strong key={i} className="text-amber-300 font-bold">{part}</strong> : part
+          i % 2 === 1 ? <strong key={i} className="text-amber-600 dark:text-amber-300 font-bold">{part}</strong> : part
         )
       }
       return (
-        <li key={idx} className="ml-4 list-disc text-xs text-amber-100/90 leading-relaxed font-semibold mb-1">
+        <li key={idx} className="ml-4 list-disc text-xs text-slate-800 dark:text-amber-100/90 leading-relaxed font-semibold mb-1">
           {itemContent}
         </li>
       )
     }
 
     return (
-      <p key={idx} className="text-xs text-amber-100/90 leading-relaxed font-semibold mb-2">
+      <p key={idx} className="text-xs text-slate-800 dark:text-amber-100/90 leading-relaxed font-semibold mb-2">
         {content}
       </p>
     )
@@ -66,8 +66,10 @@ export default function TeachingLesson({ question, selectedAnswerId, onClose }: 
   // Load API key from local storage on mount
   useEffect(() => {
     const savedKey = localStorage.getItem("gemini_api_key") || ""
-    setApiKey(savedKey)
-    setKeyInput(savedKey)
+    setTimeout(() => {
+      setApiKey(savedKey)
+      setKeyInput(savedKey)
+    }, 0)
   }, [])
 
   useEffect(() => {
@@ -132,6 +134,7 @@ Keep your response structured, concise (around 120-150 words), and formatted wit
     }
 
     fetchLesson()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [question.id, selectedAnswerId, correctAnswer?.id, question.domain, apiKey])
 
   const handleSaveKey = () => {
@@ -147,45 +150,45 @@ Keep your response structured, concise (around 120-150 words), and formatted wit
   }
 
   return (
-    <div className="mt-4 p-5 rounded-2xl border border-amber-500/20 bg-amber-950/10 backdrop-blur-md relative z-10 transition-all duration-300">
+    <div className="mt-4 p-5 rounded-2xl border border-amber-500/20 bg-amber-500/5 dark:bg-amber-950/10 backdrop-blur-md relative z-10 transition-all duration-300">
       <div className="flex items-start gap-4">
         <div className="text-3xl select-none pt-0.5 animate-pulse">📖</div>
         <div className="flex-1 min-w-0 space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="font-bold text-amber-400 text-xs tracking-wider uppercase">Interactive AI Teaching Lesson</h3>
+            <h3 className="font-bold text-amber-600 dark:text-amber-400 text-xs tracking-wider uppercase">Interactive AI Teaching Lesson</h3>
             <button
               onClick={onClose}
-              className="text-amber-500 hover:text-amber-300 text-2xl leading-none transition-colors cursor-pointer"
+              className="text-amber-600 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 text-2xl leading-none transition-colors cursor-pointer"
             >
               ×
             </button>
           </div>
 
           {loading ? (
-            <div className="flex items-center gap-3 text-xs font-bold text-amber-400 py-2">
+            <div className="flex items-center gap-3 text-xs font-bold text-amber-600 dark:text-amber-400 py-2">
               <div className="animate-spin h-4 w-4 border-2 border-amber-400 border-t-transparent rounded-full" />
               AI Assistant composing custom concept review...
             </div>
           ) : lesson ? (
             <div className="space-y-4">
-              <div className="text-xs text-amber-100/90 leading-relaxed font-semibold">
+              <div className="text-xs text-slate-800 dark:text-amber-100/90 leading-relaxed font-semibold">
                 {renderMarkdown(lesson.miniLesson)}
               </div>
               
-              <div className="p-3.5 bg-slate-950/50 rounded-xl border border-amber-500/10 shadow-inner">
-                <p className="text-xs font-bold text-amber-400 uppercase tracking-widest mb-1">📌 Key Lesson Takeaway</p>
-                <p className="text-xs text-amber-200 font-medium leading-relaxed">{lesson.keyConcept}</p>
+              <div className="p-3.5 bg-slate-50 dark:bg-slate-950/50 rounded-xl border border-black/5 dark:border-amber-500/10 shadow-inner">
+                <p className="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-widest mb-1">📌 Key Lesson Takeaway</p>
+                <p className="text-xs text-amber-900 dark:text-amber-200 font-medium leading-relaxed">{lesson.keyConcept}</p>
               </div>
 
               {/* Related topics */}
               {lesson.relatedTopics && lesson.relatedTopics.length > 0 && (
-                <div className="space-y-1.5 border-b border-white/5 pb-4">
-                  <p className="text-[11px] font-bold text-amber-500/80 uppercase tracking-widest">Recommended Related Concepts:</p>
+                <div className="space-y-1.5 border-b border-black/5 dark:border-white/5 pb-4">
+                  <p className="text-[11px] font-bold text-amber-600 dark:text-amber-500/80 uppercase tracking-widest">Recommended Related Concepts:</p>
                   <div className="flex flex-wrap gap-1.5">
                     {lesson.relatedTopics.map((t) => (
                       <span
                         key={t}
-                        className="px-2.5 py-0.5 bg-slate-900 border border-amber-500/10 text-amber-300 rounded-full text-[11px] font-bold tracking-wide"
+                        className="px-2.5 py-0.5 bg-slate-100 dark:bg-slate-900 border border-amber-500/15 dark:border-amber-500/10 text-amber-700 dark:text-amber-300 rounded-full text-[11px] font-bold tracking-wide"
                       >
                         {t}
                       </span>
@@ -196,18 +199,18 @@ Keep your response structured, concise (around 120-150 words), and formatted wit
 
               {/* Gemini API Key Configuration Panel */}
               {!apiKey ? (
-                <div className="p-3.5 bg-slate-950/50 border border-white/5 rounded-xl space-y-2">
-                  <p className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                <div className="p-3.5 bg-slate-50 dark:bg-slate-950/50 border border-black/5 dark:border-white/5 rounded-xl space-y-2">
+                  <p className="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
                     🔑 Unlock Personal AI Tutor Explanations
                   </p>
-                  <p className="text-xs text-slate-500 leading-normal font-semibold">
+                  <p className="text-xs text-slate-600 dark:text-slate-500 leading-normal font-semibold">
                     Enter a free Gemini API key to let the AI explain precisely why your selected wrong option is incorrect and why the correct one holds. Stored locally in your browser.
                   </p>
                   <div className="flex gap-2">
                     <input
                       type="password"
                       placeholder="Paste Gemini API Key (AIzaSy...)"
-                      className="flex-1 px-3 py-1 bg-slate-900 border border-white/10 rounded-lg text-xs text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500"
+                      className="flex-1 px-3 py-1 bg-white dark:bg-slate-900 border border-black/10 dark:border-white/10 rounded-lg text-xs text-foreground placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:border-indigo-500"
                       value={keyInput}
                       onChange={(e) => setKeyInput(e.target.value)}
                     />
@@ -224,18 +227,18 @@ Keep your response structured, concise (around 120-150 words), and formatted wit
                       href="https://aistudio.google.com/"
                       target="_blank"
                       rel="noreferrer"
-                      className="text-indigo-400 hover:underline"
+                      className="text-indigo-600 dark:text-indigo-400 hover:underline"
                     >
                       Create a free Gemini API Key in 30 seconds
                     </a>
                   </p>
                 </div>
               ) : (
-                <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1 font-semibold">
+                <div className="flex items-center justify-between text-[11px] text-slate-600 dark:text-slate-500 pt-1 font-semibold">
                   <span>🤖 AI Tutor Active (Gemini API Integration)</span>
                   <button
                     onClick={handleClearKey}
-                    className="hover:text-rose-450 transition-colors uppercase tracking-widest font-black cursor-pointer"
+                    className="hover:text-rose-600 dark:hover:text-rose-450 transition-colors uppercase tracking-widest font-black cursor-pointer"
                   >
                     [Deactivate Key]
                   </button>

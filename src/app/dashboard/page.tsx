@@ -18,11 +18,11 @@ interface Attempt {
 }
 
 const domainColors: Record<string, string> = {
-  "General Security Concepts": "bg-blue-500/10 text-blue-400 border-blue-500/20",
-  "Threats, Vulnerabilities, and Mitigations": "bg-red-500/10 text-red-400 border-red-500/20",
-  "Security Architecture": "bg-purple-500/10 text-purple-400 border-purple-500/20",
-  "Security Operations": "bg-green-500/10 text-green-400 border-green-500/20",
-  "Security Program Management and Oversight": "bg-orange-500/10 text-orange-400 border-orange-500/20",
+  "General Security Concepts": "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20 dark:border-blue-500/30",
+  "Threats, Vulnerabilities, and Mitigations": "bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20 dark:border-red-500/30",
+  "Security Architecture": "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20 dark:border-purple-500/30",
+  "Security Operations": "bg-green-500/10 text-emerald-700 dark:text-green-400 border-green-500/20 dark:border-green-500/30",
+  "Security Program Management and Oversight": "bg-orange-500/10 text-orange-650 dark:text-orange-400 border-orange-500/20 dark:border-orange-500/30",
 }
 
 export default function Dashboard() {
@@ -33,22 +33,26 @@ export default function Dashboard() {
 
   useEffect(() => {
     const stored = localStorage.getItem("examAttempts")
-    if (stored) setAttempts(JSON.parse(stored))
+    const attemptsData = stored ? JSON.parse(stored) : []
 
     const perf = getPerformance()
-    setDomainPerf(
-      perf.map((p) => ({
-        domain: p.domain,
-        correct: p.correct,
-        incorrect: p.incorrect,
-        streak: p.streak,
-        accuracy:
-          p.correct + p.incorrect > 0
-            ? Math.round((p.correct / (p.correct + p.incorrect)) * 100)
-            : null,
-      }))
-    )
-    setWeakestDomains(getWeakestDomains(5))
+    const perfData = perf.map((p) => ({
+      domain: p.domain,
+      correct: p.correct,
+      incorrect: p.incorrect,
+      streak: p.streak,
+      accuracy:
+        p.correct + p.incorrect > 0
+          ? Math.round((p.correct / (p.correct + p.incorrect)) * 100)
+          : null,
+    }))
+    const weakest = getWeakestDomains(5)
+
+    setTimeout(() => {
+      setAttempts(attemptsData)
+      setDomainPerf(perfData)
+      setWeakestDomains(weakest)
+    }, 0)
   }, [])
 
   const stats = {
@@ -134,7 +138,7 @@ export default function Dashboard() {
                   <span
                     key={d}
                     className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${
-                      domainColors[d] ?? "bg-slate-800 text-slate-300 border-white/10"
+                      domainColors[d] ?? "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-black/5 dark:border-white/10"
                     }`}
                   >
                     {d}
@@ -151,7 +155,8 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Radar Chart + Weightage         {domainPerf.length > 0 && (
+        {/* Radar Chart + Weightage */}
+        {domainPerf.length > 0 && (
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
             <div className="lg:col-span-2 theme-card backdrop-blur-xl rounded-2xl p-6 shadow-xl flex flex-col justify-between hover:border-indigo-500/25 transition-colors">
               <div>
@@ -232,7 +237,7 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-        )}  )}
+        )}
 
         {/* Domain Performance */}
         {domainPerf.length > 0 && (
@@ -258,7 +263,7 @@ export default function Dashboard() {
                       <div className="flex items-start justify-between gap-2">
                         <span
                           className={`text-[9px] font-bold px-2 py-0.5 rounded border leading-relaxed truncate ${
-                            domainColors[p.domain] ?? "bg-slate-800 text-slate-300 border-white/10"
+                            domainColors[p.domain] ?? "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-black/5 dark:border-white/10"
                           }`}
                         >
                           {p.domain}
