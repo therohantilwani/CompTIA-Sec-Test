@@ -5,6 +5,8 @@ import { DomainPerformance } from "@/lib/performance"
 import { SY0_701_WEIGHTAGE } from "@/lib/weightage"
 
 const DECK_URL = "https://raw.githubusercontent.com/PR0CK0/quizzical/main/decks/security-plus-full.json"
+const SUPABASE_URL = "https://yqqdntluzslbquzddapx.supabase.co/rest/v1/questions?test_type=eq.security"
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlxcWRudGx1enNsYnF1emRkYXB4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTE2NjgsImV4cCI6MjA4MTc2NzY2OH0.Pf5lOHAuJEyy4Gw-ZjVI4gxbuSfWVKB66d2NhdsBjOc"
 
 const domainMapping: Record<string, string> = {
   "General Security Concepts": "General Security Concepts",
@@ -14,6 +16,17 @@ const domainMapping: Record<string, string> = {
   "Security Program Management": "Security Program Management and Oversight",
   "Security Program Management and Oversight": "Security Program Management and Oversight",
   "Cryptography": "Security Architecture"
+}
+
+const studyIoDomainMapping: Record<string, string> = {
+  "architecture-design": "Security Architecture",
+  "cryptography": "General Security Concepts",
+  "governance-compliance": "Security Program Management and Oversight",
+  "identity-access-management": "Security Architecture",
+  "implementation": "Security Architecture",
+  "operations-incident-response": "Security Operations",
+  "risk-management": "Security Program Management and Oversight",
+  "threats-vulnerabilities": "Threats, Vulnerabilities, and Mitigations"
 }
 
 function shuffleArray<T>(arr: T[]): T[] {
@@ -27,8 +40,8 @@ function shuffleArray<T>(arr: T[]): T[] {
 
 function shuffleQuestionAnswers(q: any): Question {
   const ids = ["a", "b", "c", "d"]
-  const correctAnswer = q.answers.find((a: any) => a.isCorrect)
-  const wrongAnswers = q.answers.filter((a: any) => !a.isCorrect)
+  const correctAnswer = q.answers.find((a: any) => a?.isCorrect)
+  const wrongAnswers = q.answers.filter((a: any) => !a?.isCorrect)
   const all = [...wrongAnswers]
   const correctIdx = Math.floor(Math.random() * Math.min(4, all.length + 1))
   all.splice(correctIdx, 0, correctAnswer)
@@ -36,46 +49,109 @@ function shuffleQuestionAnswers(q: any): Question {
     ...q,
     answers: all.map((a: any, i: number) => ({
       id: ids[i] || i.toString(),
-      text: a.text,
-      isCorrect: a.isCorrect,
+      text: a?.text || "",
+      isCorrect: a?.isCorrect || false,
     })),
   }
 }
 
+async function fetchSupabaseQuestions(signal?: AbortSignal): Promise<Question[]> {
+  const res = await fetch(SUPABASE_URL, {
+    method: "GET",
+    headers: {
+      "apikey": SUPABASE_ANON_KEY,
+      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+      "Accept": "application/json"
+    },
+    signal
+  })
+  if (!res.ok) {
+    throw new Error(`Supabase HTTP error ${res.status}: ${res.statusText}`)
+  }
+  const data = await res.json()
+  if (!Array.isArray(data)) {
+    throw new Error("Invalid structure: expected array from Supabase")
+  }
+
+  const ids = ["a", "b", "c", "d"]
+  return data.map((q: any, idx: number) => {
+    const answers = (q.options || []).map((optText: string, oIdx: number) => ({
+      id: ids[oIdx] || oIdx.toString(),
+      text: optText,
+      isCorrect: oIdx === q.correct_answer,
+    }))
+
+    return {
+      id: `studyio_${q.id ?? idx}`,
+      type: "mcq",
+      domain: studyIoDomainMapping[q.category] || "General Security Concepts",
+      text: q.question || "",
+      answers,
+      explanation: q.explanation || "",
+    }
+  })
+}
+
+async function fetchGitQuestions(signal?: AbortSignal): Promise<Question[]> {
+  const res = await fetch(DECK_URL, { signal })
+  if (!res.ok) {
+    throw new Error(`Git deck HTTP error ${res.status}: ${res.statusText}`)
+  }
+  const data = await res.json()
+  if (!data || !Array.isArray(data.questions)) {
+    throw new Error("Invalid structure: questions array missing in Git deck")
+  }
+
+  const ids = ["a", "b", "c", "d"]
+  return data.questions.map((q: any, idx: number) => {
+    const answers = (q.answers || []).map((ansText: string, aIdx: number) => ({
+      id: ids[aIdx] || aIdx.toString(),
+      text: ansText,
+      isCorrect: ansText.trim() === q.correct.trim(),
+    }))
+
+    return {
+      id: `online_${q.id ?? idx}`,
+      type: "mcq",
+      domain: domainMapping[q.domain] || q.domain || "General Security Concepts",
+      text: q.question || "",
+      answers,
+      explanation: q.explanation || "",
+    }
+  })
+}
+
 export async function fetchQuestionsFromInternet(): Promise<Question[]> {
   const controller = new AbortController()
-  const timeoutId = setTimeout(() => controller.abort(), 3000)
+  const timeoutId = setTimeout(() => controller.abort(), 4000)
 
   try {
-    const res = await fetch(DECK_URL, { signal: controller.signal })
+    const results = await Promise.allSettled([
+      fetchSupabaseQuestions(controller.signal),
+      fetchGitQuestions(controller.signal)
+    ])
     clearTimeout(timeoutId)
-    
-    if (!res.ok) {
-      throw new Error(`HTTP error ${res.status}: ${res.statusText}`)
-    }
-    
-    const data = await res.json()
-    if (!data || !Array.isArray(data.questions)) {
-      throw new Error("Invalid structure: questions array missing")
-    }
 
-    const ids = ["a", "b", "c", "d"]
-    return data.questions.map((q: any, idx: number) => {
-      const answers = (q.answers || []).map((ansText: string, aIdx: number) => ({
-        id: ids[aIdx] || aIdx.toString(),
-        text: ansText,
-        isCorrect: ansText.trim() === q.correct.trim(),
-      }))
+    const allQuestions: Question[] = []
+    const seenSignatures = new Set<string>()
 
-      return {
-        id: `online_${q.id ?? idx}`,
-        type: "mcq",
-        domain: domainMapping[q.domain] || q.domain || "General Security Concepts",
-        text: q.question || "",
-        answers,
-        explanation: q.explanation || "",
+    results.forEach((result) => {
+      if (result.status === "fulfilled" && Array.isArray(result.value)) {
+        result.value.forEach((q) => {
+          // Unique signature: normalize lowercase letters and numbers
+          const sig = q.text.toLowerCase().replace(/[^a-z0-9]/g, "").substring(0, 100)
+          if (!seenSignatures.has(sig)) {
+            seenSignatures.add(sig)
+            allQuestions.push(q)
+          }
+        })
+      } else if (result.status === "rejected") {
+        console.error("Fetcher error:", result.reason)
       }
     })
+
+    console.log(`Fetched ${allQuestions.length} unique questions from the internet`)
+    return allQuestions
   } catch (error) {
     clearTimeout(timeoutId)
     console.error("Error fetching online questions, using local offline fallback:", error)
@@ -176,3 +252,4 @@ export async function loadClientQuestions({
 
   return questions
 }
+
