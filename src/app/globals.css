@@ -1,8 +1,33 @@
 @import "tailwindcss";
 
 :root {
+  --background: #f8fafc; /* slate-50 */
+  --foreground: #0f172a; /* slate-900 */
+  --card-bg: rgba(255, 255, 255, 0.75);
+  --card-border: rgba(15, 23, 42, 0.08);
+  --grid-line: rgba(15, 23, 42, 0.04);
+  --shadow-color: rgba(15, 23, 42, 0.05);
+  --radial-from: #f8fafc;
+  --radial-via: #eff6ff;
+  --radial-to: #e2e8f0;
+  --text-muted: #64748b; /* slate-500 */
+  --nav-bg: rgba(248, 250, 252, 0.85);
+  --border: rgba(15, 23, 42, 0.08);
+}
+
+.dark {
   --background: #09090b; /* slate-950 */
   --foreground: #f8fafc; /* slate-50 */
+  --card-bg: rgba(15, 23, 42, 0.45);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --grid-line: rgba(255, 255, 255, 0.04);
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --radial-from: #0f172a;
+  --radial-via: #090d16;
+  --radial-to: #030712;
+  --text-muted: #94a3b8; /* slate-400 */
+  --nav-bg: rgba(15, 23, 42, 0.65);
+  --border: rgba(255, 255, 255, 0.08);
 }
 
 @theme inline {
@@ -17,22 +42,53 @@ body {
   color: var(--foreground);
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Custom Scrollbar for premium feel */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #09090b;
+  background: var(--background);
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: var(--card-border);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: var(--text-muted);
+}
+
+/* Custom Theme Styles */
+.bg-theme-gradient {
+  background-image: radial-gradient(ellipse at top, var(--radial-from), var(--radial-via), var(--radial-to));
+}
+
+.bg-theme-grid {
+  background-image: linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+                    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 4rem 4rem;
+}
+
+.theme-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: 0 10px 25px -5px var(--shadow-color), 0 8px 10px -6px var(--shadow-color);
+}
+
+.theme-border {
+  border-color: var(--border);
+}
+
+.theme-nav {
+  background-color: var(--nav-bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.theme-text-muted {
+  color: var(--text-muted);
 }
 
 /* Glow Pulse Animation */
@@ -50,3 +106,4 @@ body {
 .pulse-glow-red {
   animation: glowPulse 2.2s infinite ease-in-out;
 }
+

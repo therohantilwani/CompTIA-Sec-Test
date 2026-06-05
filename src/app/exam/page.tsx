@@ -7,6 +7,7 @@ import TeachingLesson from "@/components/TeachingLesson"
 import SpiderChart from "@/components/SpiderChart"
 import { Question } from "@/types"
 import Logo from "@/components/Logo"
+import ThemeToggle from "@/components/ThemeToggle"
 import { loadClientQuestions, fetchQuestionsFromInternet } from "@/lib/questions-loader"
 import { questionBank } from "@/lib/questions-bank"
 import { getPerformance, updatePerformance, getDomainAccuracy, getDomainStreak, getAnsweredCorrectIds, markAnsweredCorrect, markAnswered, getAllAnsweredIds, getSeenTopics, markTopicSeen } from "@/lib/performance"
@@ -284,42 +285,44 @@ export default function ExamPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-indigo-950 to-slate-950 text-slate-100 flex flex-col relative overflow-hidden">
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-40 pointer-events-none" />
+    <div className="min-h-screen bg-theme-gradient text-foreground flex flex-col relative overflow-hidden transition-colors duration-300">
+      {/* Background decoration grid */}
+      <div className="absolute inset-0 bg-theme-grid [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-40 pointer-events-none" />
       
-      <header className="bg-slate-900/60 backdrop-blur-md border-b border-white/5 relative z-10">
+      <header className="theme-nav backdrop-blur-md relative z-10">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Logo size={28} className="cursor-pointer hover:scale-105 transition-all" onClick={() => router.push("/")} />
             <div className="flex flex-col">
-              <span className="text-sm font-bold text-white tracking-tight">Sec+ Exam Client</span>
-              <span className="text-[9px] text-indigo-400 font-semibold tracking-widest uppercase mt-0.5">Adaptive Session</span>
+              <span className="text-sm font-bold tracking-tight">Sec+ Exam Client</span>
+              <span className="text-[9px] text-indigo-500 dark:text-indigo-400 font-semibold tracking-widest uppercase mt-0.5">Adaptive Session</span>
             </div>
           </div>
           
-          <div className="flex items-center gap-4">
-            <div className="text-xs font-mono font-bold text-slate-300">
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <div className="text-xs font-mono font-bold theme-text-muted">
               Q: {currentIndex + 1} / {questions.length}
             </div>
             <div className="text-xs font-mono">
-              <span className="text-emerald-400 font-bold">{answeredCount}</span>
-              <span className="text-slate-500">/{questions.length} answered</span>
+              <span className="text-emerald-500 dark:text-emerald-400 font-bold">{answeredCount}</span>
+              <span className="theme-text-muted">/{questions.length} answered</span>
             </div>
 
             {/* Premium Sliding Toggle */}
-            <div className="flex bg-slate-950 rounded-lg p-0.5 text-[11px] font-bold border border-white/5 shadow-inner">
+            <div className="flex bg-slate-200 dark:bg-slate-950 rounded-lg p-0.5 text-[11px] font-bold border theme-border shadow-inner">
               <button
                 onClick={() => setMode("study")}
-                className={`px-3 py-1 rounded-md transition-all ${
-                  mode === "study" ? "bg-indigo-600 text-white shadow-md shadow-indigo-500/10" : "text-slate-400 hover:text-slate-200"
+                className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
+                  mode === "study" ? "bg-indigo-600 text-white shadow-md shadow-indigo-500/10" : "theme-text-muted hover:text-foreground"
                 }`}
               >
                 Study
               </button>
               <button
                 onClick={() => setMode("exam")}
-                className={`px-3 py-1 rounded-md transition-all ${
-                  mode === "exam" ? "bg-rose-600 text-white shadow-md shadow-rose-500/10" : "text-slate-400 hover:text-slate-200"
+                className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
+                  mode === "exam" ? "bg-rose-600 text-white shadow-md shadow-rose-500/10" : "theme-text-muted hover:text-foreground"
                 }`}
               >
                 Exam
@@ -328,7 +331,7 @@ export default function ExamPage() {
 
             <button
               onClick={() => router.push("/")}
-              className="text-xs text-slate-400 hover:text-white font-semibold transition-colors"
+              className="text-xs theme-text-muted hover:text-foreground font-semibold transition-colors cursor-pointer"
             >
               Exit
             </button>
@@ -338,7 +341,7 @@ export default function ExamPage() {
         {/* Dynamic Weightage Progress Tracking */}
         {!submitted && (
           <div className="max-w-5xl mx-auto px-6 pb-2.5">
-            <div className="flex gap-1 h-2 rounded-full overflow-hidden bg-slate-950 p-0.5 border border-white/5">
+            <div className="flex gap-1 h-2 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-950 p-0.5 border theme-border">
               {weightageProgress.map((p) => {
                 const w = SY0_701_WEIGHTAGE.find((d) => d.domain === p.domain)
                 const color = domainChartColors[p.domain] ?? "#6366f1"
@@ -363,27 +366,27 @@ export default function ExamPage() {
                 )
               })}
             </div>
-            <div className="flex justify-between mt-1 text-[9px] font-bold text-slate-500">
+            <div className="flex justify-between mt-1 text-[9px] font-bold theme-text-muted">
               <button
                 onClick={() => setShowWeightage(!showWeightage)}
-                className="hover:text-slate-300 transition-colors uppercase tracking-wider"
+                className="hover:text-foreground transition-colors uppercase tracking-wider cursor-pointer"
               >
                 {showWeightage ? "Hide" : "Show"} Domain Breakdown
               </button>
               <button
                 onClick={() => setShowSpider(!showSpider)}
-                className="hover:text-slate-300 transition-colors uppercase tracking-wider"
+                className="hover:text-foreground transition-colors uppercase tracking-wider cursor-pointer"
               >
                 {showSpider ? "Hide" : "Show"} Performance Radar
               </button>
             </div>
 
             {nextDomain && (
-              <div className="mt-2 p-2 bg-indigo-950/20 border border-indigo-500/10 rounded-xl text-[10px] text-indigo-300 flex items-center gap-2">
+              <div className="mt-2 p-2 bg-indigo-500/5 dark:bg-indigo-950/20 border border-indigo-500/15 dark:border-indigo-500/10 rounded-xl text-[10px] text-indigo-600 dark:text-indigo-300 flex items-center gap-2">
                 <span>🎯</span>
                 <span className="font-bold">Suggested Focus:</span>
                 <span>{nextDomain.domain}</span>
-                <span className="text-slate-500">— {nextDomain.reason}</span>
+                <span className="theme-text-muted">— {nextDomain.reason}</span>
               </div>
             )}
           </div>
@@ -398,25 +401,25 @@ export default function ExamPage() {
                 const isCurrent = i === currentIndex
                 const streak = getDomainStreak(q.domain)
                 
-                let borderColor = "border-white/5"
-                if (streak >= 3) borderColor = "border-amber-400"
+                let borderColor = "border-black/5 dark:border-white/5"
+                if (streak >= 3) borderColor = "border-amber-400 animate-pulse"
                 
                 const acc = getDomainAccuracy(q.domain)
                 if (acc !== null && acc < 50) borderColor = "border-rose-500/60"
                 else if (acc !== null && acc >= 80) borderColor = "border-emerald-500/60"
                 
-                let btnStyle = "bg-slate-900/60 text-slate-400 hover:bg-slate-800"
+                let btnStyle = "bg-slate-100 dark:bg-slate-900/60 theme-text-muted border-black/5 dark:border-white/5 hover:bg-slate-200 dark:hover:bg-slate-800"
                 if (isCurrent) {
                   btnStyle = "bg-indigo-600 text-white shadow-[0_0_12px_rgba(99,102,241,0.5)] border-indigo-400"
                 } else if (isAnswered) {
-                  btnStyle = "bg-indigo-950/40 text-indigo-300 border-indigo-500/20"
+                  btnStyle = "bg-indigo-500/10 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-300 border-indigo-500/20"
                 }
 
                 return (
                   <button
                     key={q.id}
                     onClick={() => setCurrentIndex(i)}
-                    className={`flex-shrink-0 w-7 h-7 text-[10px] rounded-lg font-bold transition-all border ${btnStyle} ${borderColor}`}
+                    className={`flex-shrink-0 w-7 h-7 text-[10px] rounded-lg font-bold transition-all border cursor-pointer ${btnStyle} ${borderColor}`}
                     title={`${q.domain} #${i + 1}`}
                   >
                     {i + 1}
@@ -431,8 +434,8 @@ export default function ExamPage() {
       {/* Dynamic Weightage Area */}
       {showWeightage && !submitted && (
         <div className="max-w-5xl mx-auto px-6 pt-4 w-full relative z-10">
-          <div className="p-5 bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl space-y-4">
-            <h3 className="text-xs font-bold text-white uppercase tracking-wider">Exam weightage breakdown</h3>
+          <div className="p-5 theme-card backdrop-blur-xl rounded-2xl shadow-2xl space-y-4">
+            <h3 className="text-xs font-bold uppercase tracking-wider">Exam weightage breakdown</h3>
             <div className="space-y-3.5">
               {SY0_701_WEIGHTAGE.map((w) => {
                 const prog = weightageProgress.find((p) => p.domain === w.domain)
@@ -442,19 +445,19 @@ export default function ExamPage() {
                     <div className="flex items-center justify-between text-xs">
                       <div className="flex items-center gap-2 min-w-0">
                         <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
-                        <span className="font-semibold text-slate-300 truncate">{w.domain}</span>
+                        <span className="font-bold text-foreground/90 truncate">{w.domain}</span>
                       </div>
-                      <div className="flex items-center gap-2.5 text-slate-500 text-[10px] flex-shrink-0 font-mono">
+                      <div className="flex items-center gap-2.5 theme-text-muted text-[10px] flex-shrink-0 font-mono font-semibold">
                         <span>{w.weight}% of exam</span>
                         <span>{prog?.answered ?? 0}/{w.targetQuestions} answered</span>
                         {prog && prog.accuracy !== null && (
-                          <span className={prog.accuracy >= 75 ? "text-emerald-400" : "text-amber-400"}>
+                          <span className={prog.accuracy >= 75 ? "text-emerald-500 dark:text-emerald-400" : "text-amber-500 dark:text-amber-400 font-bold"}>
                             {prog.accuracy}% accuracy
                           </span>
                         )}
                       </div>
                     </div>
-                    <div className="h-1.5 bg-slate-950 rounded-full overflow-hidden border border-white/5">
+                    <div className="h-1.5 bg-slate-200 dark:bg-slate-950 rounded-full overflow-hidden border theme-border">
                       <div
                         className="h-full rounded-full transition-all duration-300"
                         style={{ width: `${Math.min(100, prog?.completed ?? 0)}%`, backgroundColor: color, opacity: 0.8 }}
@@ -471,9 +474,9 @@ export default function ExamPage() {
       {/* Dynamic Spider Radar */}
       {showSpider && !submitted && (
         <div className="max-w-5xl mx-auto px-6 pt-4 w-full relative z-10">
-          <div className="p-5 bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl flex flex-col items-center">
-            <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-1">Domain Performance Radar</h3>
-            <p className="text-[9px] text-slate-500 mb-4">Benchmark Zone matches 75% Passing Threshold</p>
+          <div className="p-5 theme-card backdrop-blur-xl rounded-2xl shadow-2xl flex flex-col items-center">
+            <h3 className="text-xs font-bold uppercase tracking-wider mb-1">Domain Performance Radar</h3>
+            <p className="text-[9px] theme-text-muted mb-4 font-semibold">Benchmark Zone matches 75% Passing Threshold</p>
             <SpiderChart data={spiderData} size={240} />
           </div>
         </div>
@@ -481,10 +484,10 @@ export default function ExamPage() {
 
       <main className="max-w-5xl mx-auto px-6 py-6 w-full flex-1 relative z-10 flex flex-col justify-between">
         {tooFewQuestions && (
-          <div className="p-8 bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl text-center space-y-4 my-auto">
+          <div className="p-8 theme-card backdrop-blur-xl rounded-2xl text-center space-y-4 my-auto shadow-2xl">
             <div className="text-5xl animate-bounce">📭</div>
-            <h2 className="text-lg font-bold text-white">No questions available</h2>
-            <p className="text-xs text-slate-400 max-w-sm mx-auto">
+            <h2 className="text-lg font-bold">No questions available</h2>
+            <p className="text-xs theme-text-muted max-w-sm mx-auto font-semibold">
               Only {questions.length} new questions could be generated. Reset answered questions database to recycle exam pools.
             </p>
             <div className="flex gap-3 justify-center pt-2">
@@ -507,7 +510,7 @@ export default function ExamPage() {
                   } catch {}
                   setLoading(false)
                 }}
-                className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-500/20 transition-all"
+                className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-500/20 transition-all cursor-pointer"
               >
                 Generate Questions
               </button>
@@ -516,7 +519,7 @@ export default function ExamPage() {
                   localStorage.removeItem("answeredCorrectIds")
                   window.location.reload()
                 }}
-                className="px-5 py-2.5 bg-slate-800 border border-white/10 hover:bg-slate-750 text-white text-xs font-bold rounded-xl transition-all"
+                className="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-black/10 dark:border-white/10 hover:bg-slate-200 dark:hover:bg-slate-750 text-foreground dark:text-white text-xs font-bold rounded-xl transition-all cursor-pointer"
               >
                 Reset Progress Database
               </button>
@@ -594,14 +597,14 @@ export default function ExamPage() {
               <button
                 onClick={() => setCurrentIndex((i) => Math.max(0, i - 1))}
                 disabled={currentIndex === 0 || submitted}
-                className="px-4 py-2.5 text-xs font-bold text-slate-300 bg-slate-900 border border-white/10 rounded-xl hover:bg-slate-800 disabled:opacity-30 disabled:pointer-events-none transition-all"
+                className="px-4 py-2.5 text-xs font-bold text-foreground bg-slate-100 dark:bg-slate-900 border border-black/10 dark:border-white/10 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-800 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer"
               >
                 ← Previous
               </button>
               <button
                 onClick={() => setCurrentIndex((i) => Math.min(questions.length - 1, i + 1))}
                 disabled={currentIndex === questions.length - 1 || submitted}
-                className="px-4 py-2.5 text-xs font-bold text-slate-300 bg-slate-900 border border-white/10 rounded-xl hover:bg-slate-800 disabled:opacity-30 disabled:pointer-events-none transition-all"
+                className="px-4 py-2.5 text-xs font-bold text-foreground bg-slate-100 dark:bg-slate-900 border border-black/10 dark:border-white/10 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-800 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer"
               >
                 Next →
               </button>
@@ -646,15 +649,15 @@ export default function ExamPage() {
         {/* Results Panel */}
         {result && (
           <div className="mt-6 space-y-6 my-auto">
-            <div className="p-6 bg-slate-900/40 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl relative">
+            <div className="p-6 theme-card backdrop-blur-xl rounded-2xl shadow-2xl relative">
               <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-indigo-500/5 rounded-full blur-3xl opacity-65 pointer-events-none" />
               
-              <div className="flex flex-col md:flex-row items-center justify-between gap-6 border-b border-white/5 pb-6">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-6 border-b theme-border pb-6">
                 <div>
-                  <h2 className="text-lg font-black text-white uppercase tracking-wider">Exam Grading Report</h2>
-                  <p className="text-[10px] text-slate-500 font-mono mt-0.5">COMPTIA SECURITY+ SY0-701 EVALUATION</p>
+                  <h2 className="text-lg font-black uppercase tracking-wider">Exam Grading Report</h2>
+                  <p className="text-[10px] theme-text-muted font-mono mt-0.5 font-bold">COMPTIA SECURITY+ SY0-701 EVALUATION</p>
                 </div>
-                <div className="flex-shrink-0 bg-slate-950 p-4 rounded-2xl border border-white/5">
+                <div className="flex-shrink-0 bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border theme-border">
                   <SpiderChart
                     data={SY0_701_WEIGHTAGE.map((w) => {
                       const dr = result.domainResults.find((r) => r.domain === w.domain)
@@ -672,28 +675,28 @@ export default function ExamPage() {
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 my-6">
-                <div className="text-center p-4 bg-slate-950/40 border border-white/5 rounded-xl">
-                  <div className="text-2xl font-black text-white">{result.score}/{result.total}</div>
-                  <div className="text-[9px] font-bold text-slate-500 uppercase tracking-wider mt-0.5">Correct Answers</div>
+                <div className="text-center p-4 bg-slate-50 dark:bg-slate-950/40 border theme-border rounded-xl">
+                  <div className="text-2xl font-black">{result.score}/{result.total}</div>
+                  <div className="text-[9px] font-bold theme-text-muted uppercase tracking-wider mt-0.5">Correct Answers</div>
                 </div>
-                <div className="text-center p-4 bg-slate-950/40 border border-white/5 rounded-xl">
-                  <div className="text-2xl font-black text-white">{result.percentage}%</div>
-                  <div className="text-[9px] font-bold text-slate-500 uppercase tracking-wider mt-0.5">Your Percentage</div>
+                <div className="text-center p-4 bg-slate-50 dark:bg-slate-950/40 border theme-border rounded-xl">
+                  <div className="text-2xl font-black">{result.percentage}%</div>
+                  <div className="text-[9px] font-bold theme-text-muted uppercase tracking-wider mt-0.5">Your Percentage</div>
                 </div>
-                <div className="text-center p-4 bg-slate-950/40 border border-white/5 rounded-xl">
-                  <div className={`text-2xl font-black ${result.passed ? "text-emerald-400" : "text-rose-400"}`}>
+                <div className="text-center p-4 bg-slate-50 dark:bg-slate-950/40 border theme-border rounded-xl">
+                  <div className={`text-2xl font-black ${result.passed ? "text-emerald-500 dark:text-emerald-400" : "text-rose-500 dark:text-rose-400"}`}>
                     {result.passed ? "PASSED" : "FAILED"}
                   </div>
-                  <div className="text-[9px] font-bold text-slate-500 uppercase tracking-wider mt-0.5">Passing Mark: 75%</div>
+                  <div className="text-[9px] font-bold theme-text-muted uppercase tracking-wider mt-0.5">Passing Mark: 75%</div>
                 </div>
-                <div className="text-center p-4 bg-slate-950/40 border border-white/5 rounded-xl">
-                  <div className="text-2xl font-black text-white">{result.total - result.score}</div>
-                  <div className="text-[9px] font-bold text-slate-500 uppercase tracking-wider mt-0.5">Incorrect Answers</div>
+                <div className="text-center p-4 bg-slate-50 dark:bg-slate-950/40 border theme-border rounded-xl">
+                  <div className="text-2xl font-black">{result.total - result.score}</div>
+                  <div className="text-[9px] font-bold theme-text-muted uppercase tracking-wider mt-0.5">Incorrect Answers</div>
                 </div>
               </div>
 
-              <div className="border-t border-white/5 pt-6 space-y-4">
-                <h3 className="text-xs font-bold text-white uppercase tracking-wider">Domain Performance Log</h3>
+              <div className="border-t theme-border pt-6 space-y-4">
+                <h3 className="text-xs font-bold uppercase tracking-wider">Domain Performance Log</h3>
                 <div className="space-y-3.5">
                   {SY0_701_WEIGHTAGE.map((w) => {
                     const dr = result.domainResults.find((r) => r.domain === w.domain)
@@ -705,9 +708,9 @@ export default function ExamPage() {
                       <div key={w.domain} className="flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
                         <div className="flex items-center gap-2 md:w-56 min-w-0">
                           <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
-                          <span className="font-semibold text-slate-300 truncate">{w.domain}</span>
+                          <span className="font-bold text-foreground/90 truncate">{w.domain}</span>
                         </div>
-                        <div className="flex-1 h-2 bg-slate-950 rounded-full overflow-hidden border border-white/5">
+                        <div className="flex-1 h-2 bg-slate-200 dark:bg-slate-950 rounded-full overflow-hidden border theme-border">
                           <div
                             className="h-full rounded-full transition-all duration-500"
                             style={{
@@ -718,8 +721,8 @@ export default function ExamPage() {
                             }}
                           />
                         </div>
-                        <div className="flex items-center gap-4 md:w-44 justify-end text-[10px] text-slate-500 font-mono">
-                          <span className="font-bold text-slate-400">
+                        <div className="flex items-center gap-4 md:w-44 justify-end text-[10px] theme-text-muted font-mono font-semibold">
+                          <span className="font-bold text-foreground/80">
                             {answered > 0 ? `${correct}/${answered} (${pct}%)` : "0 questions"}
                           </span>
                           <span>Target: {w.targetQuestions}</span>
@@ -733,13 +736,13 @@ export default function ExamPage() {
               <div className="flex gap-3 mt-8">
                 <button
                   onClick={() => router.push("/dashboard")}
-                  className="px-5 py-2.5 bg-slate-800 border border-white/10 hover:bg-slate-750 text-white rounded-xl text-xs font-bold transition-all"
+                  className="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-black/10 dark:border-white/10 hover:bg-slate-200 dark:hover:bg-slate-750 text-foreground dark:text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
                 >
                   View Dashboard
                 </button>
                 <button
                   onClick={() => window.location.reload()}
-                  className="px-5 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl text-xs font-bold hover:scale-105 active:scale-95 transition-all shadow-md shadow-indigo-500/20"
+                  className="px-5 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl text-xs font-bold hover:scale-105 active:scale-95 transition-all shadow-md shadow-indigo-500/20 cursor-pointer"
                 >
                   Try Another Exam
                 </button>

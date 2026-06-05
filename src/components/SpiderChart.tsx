@@ -60,15 +60,16 @@ export default function SpiderChart({ data, size = 280 }: SpiderChartProps) {
     const points = data.map((_, i) => getPoint(i, pct))
     const d = points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x},${p.y}`).join(" ") + "Z"
     
-    // Draw concentric ring lines (subtle slate colors matching dark mode)
+    // Draw concentric ring lines (theme-aware slate colors)
     gridPaths.push(
       <path
         key={level}
         d={d}
         fill="none"
-        stroke={level === levels ? "#475569" : "#1e293b"}
         strokeWidth={level === levels ? 1.5 : 1}
-        className="transition-all duration-300"
+        className={`transition-all duration-300 ${
+          level === levels ? "stroke-slate-400 dark:stroke-slate-600" : "stroke-slate-200 dark:stroke-slate-800"
+        }`}
       />
     )
 
@@ -93,7 +94,6 @@ export default function SpiderChart({ data, size = 280 }: SpiderChartProps) {
     const isAnyHovered = hoveredIndex !== null
     
     // Axis line colors are mapped to domain colors, highlighting on hover
-    const strokeColor = isHovered ? d.color : "#334155"
     const opacity = isHovered ? 0.9 : isAnyHovered ? 0.15 : 0.4
     const strokeWidth = isHovered ? 2.5 : 1
 
@@ -104,10 +104,12 @@ export default function SpiderChart({ data, size = 280 }: SpiderChartProps) {
         y1={cy}
         x2={p.x}
         y2={p.y}
-        stroke={strokeColor}
+        stroke={isHovered ? d.color : undefined}
         strokeOpacity={opacity}
         strokeWidth={strokeWidth}
-        className="transition-all duration-300 ease-out cursor-pointer"
+        className={`transition-all duration-300 ease-out cursor-pointer ${
+          isHovered ? "" : "stroke-slate-200 dark:stroke-slate-800"
+        }`}
         onMouseEnter={() => setHoveredIndex(i)}
         onMouseLeave={() => setHoveredIndex(null)}
       />
@@ -137,7 +139,6 @@ export default function SpiderChart({ data, size = 280 }: SpiderChartProps) {
       Math.abs(Math.cos(angle)) < 0.1 ? "middle" : Math.cos(angle) > 0 ? "start" : "end"
     
     const opacity = isHovered ? 1 : isAnyHovered ? 0.25 : 0.8
-    const textColor = isHovered ? d.color : "#94a3b8"
 
     // Wrap label and center vertically
     const lines = wrapText(d.label, 16)
@@ -157,8 +158,10 @@ export default function SpiderChart({ data, size = 280 }: SpiderChartProps) {
           y={ly}
           textAnchor={anchor}
           dominantBaseline="middle"
-          className={`text-[9.5px] ${isHovered ? "font-bold" : "font-semibold"} select-none`}
-          fill={textColor}
+          fill={isHovered ? d.color : undefined}
+          className={`text-[9.5px] ${isHovered ? "font-bold" : "font-semibold"} select-none ${
+            isHovered ? "" : "fill-slate-600 dark:fill-slate-400"
+          }`}
         >
           {lines.map((line, idx) => (
             <tspan
@@ -198,18 +201,19 @@ export default function SpiderChart({ data, size = 280 }: SpiderChartProps) {
         onMouseEnter={() => setHoveredIndex(i)}
         onMouseLeave={() => setHoveredIndex(null)}
       >
-        {/* Dark slate-900 background badge to shield the value text from grid lines */}
+        {/* Theme-aware background badge to shield the value text from grid lines */}
         <rect
           x={vx - 14}
           y={vy - 7}
           width={28}
           height={13}
           rx={3}
-          fill="#09090b"
           fillOpacity={isHovered ? 0.95 : 0.8}
-          stroke={isHovered ? scoreColor : "#1e293b"}
+          stroke={isHovered ? scoreColor : undefined}
           strokeWidth={isHovered ? 1.5 : 0.5}
-          className="transition-all duration-300 ease-out shadow-lg"
+          className={`transition-all duration-300 ease-out shadow-lg fill-slate-50 dark:fill-slate-950 ${
+            isHovered ? "" : "stroke-slate-200 dark:stroke-slate-800"
+          }`}
         />
         <text
           x={vx}
@@ -288,9 +292,8 @@ export default function SpiderChart({ data, size = 280 }: SpiderChartProps) {
                 cy={p.y}
                 r={radius}
                 fill={d.color}
-                stroke="#09090b"
                 strokeWidth={isHovered ? 2 : 1.5}
-                className="transition-all duration-300 ease-out cursor-pointer"
+                className="transition-all duration-300 ease-out cursor-pointer stroke-white dark:stroke-slate-950"
                 strokeOpacity={opacity}
                 fillOpacity={opacity}
                 onMouseEnter={() => setHoveredIndex(i)}
@@ -306,25 +309,25 @@ export default function SpiderChart({ data, size = 280 }: SpiderChartProps) {
           {labels}
 
           {/* Center Dot */}
-          <circle cx={cx} cy={cy} r={3} fill="#475569" />
+          <circle cx={cx} cy={cy} r={3} className="fill-slate-400 dark:fill-slate-600" />
         </svg>
 
         {/* Hover info banner overlay at the bottom-center of the SVG container */}
         {hoveredIndex !== null && (
-          <div className="absolute left-1/2 bottom-[-8px] transform -translate-x-1/2 bg-slate-900 border border-white/10 text-white text-[10px] px-2.5 py-1 rounded-full font-medium shadow-md transition-all duration-300 flex items-center gap-1.5 whitespace-nowrap">
+          <div className="absolute left-1/2 bottom-[-8px] transform -translate-x-1/2 bg-slate-100 dark:bg-slate-900 border border-black/10 dark:border-white/10 text-foreground dark:text-white text-[10px] px-2.5 py-1 rounded-full font-medium shadow-md transition-all duration-300 flex items-center gap-1.5 whitespace-nowrap">
             <span
               className="w-2 h-2 rounded-full animate-pulse"
               style={{ backgroundColor: data[hoveredIndex].color }}
             />
             <span className="font-bold">{data[hoveredIndex].label}:</span>
             <span>Score {data[hoveredIndex].value}%</span>
-            <span className="text-slate-600">|</span>
-            <span className="text-emerald-400 font-semibold">Passing: 75%</span>
+            <span className="text-slate-400 dark:text-slate-600">|</span>
+            <span className="text-emerald-500 dark:text-emerald-400 font-bold">Passing: 75%</span>
           </div>
         )}
       </div>
 
-      <div className="flex items-center gap-4 mt-6 text-[11px] text-slate-400 font-medium">
+      <div className="flex items-center gap-4 mt-6 text-[11px] theme-text-muted font-semibold">
         <div className="flex items-center gap-1.5">
           <div className="w-3 h-3 rounded bg-indigo-500/20 border border-indigo-500" />
           <span>Your score</span>
