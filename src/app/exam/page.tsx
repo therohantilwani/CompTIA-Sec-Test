@@ -295,7 +295,7 @@ export default function ExamPage() {
             <Logo size={28} className="cursor-pointer hover:scale-105 transition-all" onClick={() => router.push("/")} />
             <div className="flex flex-col">
               <span className="text-sm font-bold tracking-tight">Sec+ Exam Client</span>
-              <span className="text-[9px] text-indigo-500 dark:text-indigo-400 font-semibold tracking-widest uppercase mt-0.5">Adaptive Session</span>
+              <span className="text-[11px] text-indigo-500 dark:text-indigo-400 font-bold tracking-widest uppercase mt-0.5">Adaptive Session</span>
             </div>
           </div>
           
@@ -310,7 +310,7 @@ export default function ExamPage() {
             </div>
 
             {/* Premium Sliding Toggle */}
-            <div className="flex bg-slate-200 dark:bg-slate-950 rounded-lg p-0.5 text-[11px] font-bold border theme-border shadow-inner">
+            <div className="flex bg-slate-200 dark:bg-slate-950 rounded-lg p-0.5 text-xs font-bold border theme-border shadow-inner">
               <button
                 onClick={() => setMode("study")}
                 className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
@@ -366,7 +366,7 @@ export default function ExamPage() {
                 )
               })}
             </div>
-            <div className="flex justify-between mt-1 text-[9px] font-bold theme-text-muted">
+            <div className="flex justify-between mt-1 text-xs font-bold theme-text-muted">
               <button
                 onClick={() => setShowWeightage(!showWeightage)}
                 className="hover:text-foreground transition-colors uppercase tracking-wider cursor-pointer"
@@ -382,7 +382,7 @@ export default function ExamPage() {
             </div>
 
             {nextDomain && (
-              <div className="mt-2 p-2 bg-indigo-500/5 dark:bg-indigo-950/20 border border-indigo-500/15 dark:border-indigo-500/10 rounded-xl text-[10px] text-indigo-600 dark:text-indigo-300 flex items-center gap-2">
+              <div className="mt-2 p-2 bg-indigo-500/5 dark:bg-indigo-950/20 border border-indigo-500/15 dark:border-indigo-500/10 rounded-xl text-xs text-indigo-600 dark:text-indigo-300 flex items-center gap-2 font-semibold">
                 <span>🎯</span>
                 <span className="font-bold">Suggested Focus:</span>
                 <span>{nextDomain.domain}</span>
@@ -419,7 +419,7 @@ export default function ExamPage() {
                   <button
                     key={q.id}
                     onClick={() => setCurrentIndex(i)}
-                    className={`flex-shrink-0 w-7 h-7 text-[10px] rounded-lg font-bold transition-all border cursor-pointer ${btnStyle} ${borderColor}`}
+                    className={`flex-shrink-0 w-8 h-8 text-xs rounded-lg font-bold transition-all border cursor-pointer ${btnStyle} ${borderColor}`}
                     title={`${q.domain} #${i + 1}`}
                   >
                     {i + 1}
@@ -447,7 +447,7 @@ export default function ExamPage() {
                         <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
                         <span className="font-bold text-foreground/90 truncate">{w.domain}</span>
                       </div>
-                      <div className="flex items-center gap-2.5 theme-text-muted text-[10px] flex-shrink-0 font-mono font-semibold">
+                      <div className="flex items-center gap-2.5 theme-text-muted text-xs flex-shrink-0 font-mono font-semibold">
                         <span>{w.weight}% of exam</span>
                         <span>{prog?.answered ?? 0}/{w.targetQuestions} answered</span>
                         {prog && prog.accuracy !== null && (
@@ -476,7 +476,7 @@ export default function ExamPage() {
         <div className="max-w-5xl mx-auto px-6 pt-4 w-full relative z-10">
           <div className="p-5 theme-card backdrop-blur-xl rounded-2xl shadow-2xl flex flex-col items-center">
             <h3 className="text-xs font-bold uppercase tracking-wider mb-1">Domain Performance Radar</h3>
-            <p className="text-[9px] theme-text-muted mb-4 font-semibold">Benchmark Zone matches 75% Passing Threshold</p>
+            <p className="text-xs theme-text-muted mb-4 font-semibold">Benchmark Zone matches 75% Passing Threshold</p>
             <SpiderChart data={spiderData} size={240} />
           </div>
         </div>
@@ -529,7 +529,7 @@ export default function ExamPage() {
 
         {!tooFewQuestions && !submitted && (
           <div className="space-y-6">
-            <div className={`p-2.5 rounded-xl text-[10px] font-bold text-center border transition-colors ${
+            <div className={`p-2.5 rounded-xl text-xs font-bold text-center border transition-colors ${
               mode === "study" ? "bg-indigo-950/20 text-indigo-300 border-indigo-500/20" : "bg-rose-950/20 text-rose-300 border-rose-500/20"
             }`}>
               {mode === "study"
@@ -655,7 +655,7 @@ export default function ExamPage() {
               <div className="flex flex-col md:flex-row items-center justify-between gap-6 border-b theme-border pb-6">
                 <div>
                   <h2 className="text-lg font-black uppercase tracking-wider">Exam Grading Report</h2>
-                  <p className="text-[10px] theme-text-muted font-mono mt-0.5 font-bold">COMPTIA SECURITY+ SY0-701 EVALUATION</p>
+                  <p className="text-xs theme-text-muted font-mono mt-0.5 font-bold">COMPTIA SECURITY+ SY0-701 EVALUATION</p>
                 </div>
                 <div className="flex-shrink-0 bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border theme-border">
                   <SpiderChart
@@ -677,21 +677,21 @@ export default function ExamPage() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 my-6">
                 <div className="text-center p-4 bg-slate-50 dark:bg-slate-950/40 border theme-border rounded-xl">
                   <div className="text-2xl font-black">{result.score}/{result.total}</div>
-                  <div className="text-[9px] font-bold theme-text-muted uppercase tracking-wider mt-0.5">Correct Answers</div>
+                  <div className="text-[10px] font-bold theme-text-muted uppercase tracking-wider mt-0.5">Correct Answers</div>
                 </div>
                 <div className="text-center p-4 bg-slate-50 dark:bg-slate-950/40 border theme-border rounded-xl">
                   <div className="text-2xl font-black">{result.percentage}%</div>
-                  <div className="text-[9px] font-bold theme-text-muted uppercase tracking-wider mt-0.5">Your Percentage</div>
+                  <div className="text-[10px] font-bold theme-text-muted uppercase tracking-wider mt-0.5">Your Percentage</div>
                 </div>
                 <div className="text-center p-4 bg-slate-50 dark:bg-slate-950/40 border theme-border rounded-xl">
                   <div className={`text-2xl font-black ${result.passed ? "text-emerald-500 dark:text-emerald-400" : "text-rose-500 dark:text-rose-400"}`}>
                     {result.passed ? "PASSED" : "FAILED"}
                   </div>
-                  <div className="text-[9px] font-bold theme-text-muted uppercase tracking-wider mt-0.5">Passing Mark: 75%</div>
+                  <div className="text-[10px] font-bold theme-text-muted uppercase tracking-wider mt-0.5">Passing Mark: 75%</div>
                 </div>
                 <div className="text-center p-4 bg-slate-50 dark:bg-slate-950/40 border theme-border rounded-xl">
                   <div className="text-2xl font-black">{result.total - result.score}</div>
-                  <div className="text-[9px] font-bold theme-text-muted uppercase tracking-wider mt-0.5">Incorrect Answers</div>
+                  <div className="text-[10px] font-bold theme-text-muted uppercase tracking-wider mt-0.5">Incorrect Answers</div>
                 </div>
               </div>
 
@@ -721,7 +721,7 @@ export default function ExamPage() {
                             }}
                           />
                         </div>
-                        <div className="flex items-center gap-4 md:w-44 justify-end text-[10px] theme-text-muted font-mono font-semibold">
+                        <div className="flex items-center gap-4 md:w-44 justify-end text-xs theme-text-muted font-mono font-semibold">
                           <span className="font-bold text-foreground/80">
                             {answered > 0 ? `${correct}/${answered} (${pct}%)` : "0 questions"}
                           </span>

@@ -52,8 +52,8 @@ export default function ExamQuestion({ question, selectedAnswer, showResult, onA
   return (
     <div className="p-6 rounded-2xl border border-white/10 bg-slate-900/40 backdrop-blur-xl shadow-xl space-y-6">
       <div className="flex items-center gap-3">
-        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{prefix}</span>
-        <span className={`text-[9px] font-bold px-2.5 py-0.5 rounded border ${domainColor}`}>
+        <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">{prefix}</span>
+        <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded border ${domainColor}`}>
           {question.domain}
         </span>
       </div>
@@ -62,14 +62,14 @@ export default function ExamQuestion({ question, selectedAnswer, showResult, onA
 
       {parsed && (
         <div className="p-5 bg-slate-950/60 rounded-xl border border-white/5 space-y-4">
-          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+          <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">
             Diagnostic Mapping Scenario:
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               {parsed.leftItems.map((item, i) => (
                 <div key={i} className="p-3 bg-slate-900 border border-white/5 rounded-lg text-xs font-semibold text-slate-300 shadow-inner flex items-center gap-2">
-                  <span className="w-5 h-5 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center font-mono text-[9px] border border-white/5">{i + 1}</span>
+                  <span className="w-5 h-5 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center font-mono text-[10px] border border-white/5">{i + 1}</span>
                   {item}
                 </div>
               ))}
@@ -77,7 +77,7 @@ export default function ExamQuestion({ question, selectedAnswer, showResult, onA
             <div className="space-y-2">
               {parsed.rightItems.map((item, i) => (
                 <div key={i} className="p-3 bg-slate-900 border border-white/5 rounded-lg text-xs font-medium text-slate-400 shadow-inner flex items-center gap-2">
-                  <span className="w-5 h-5 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center font-mono text-[9px] border border-white/5">{String.fromCharCode(65 + i)}</span>
+                  <span className="w-5 h-5 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center font-mono text-[10px] border border-white/5">{String.fromCharCode(65 + i)}</span>
                   {item}
                 </div>
               ))}
@@ -121,15 +121,15 @@ export default function ExamQuestion({ question, selectedAnswer, showResult, onA
               className={`w-full text-left p-4 rounded-xl border transition-all duration-300 ease-out cursor-pointer ${answerStyle}`}
             >
               <div className="flex items-start gap-4">
-                <span className={`flex-shrink-0 w-6 h-6 rounded-full border flex items-center justify-center text-[10px] font-black uppercase font-mono transition-all ${badgeStyle}`}>
+                <span className={`flex-shrink-0 w-6 h-6 rounded-full border flex items-center justify-center text-xs font-black uppercase font-mono transition-all ${badgeStyle}`}>
                   {answer.id}
                 </span>
                 <span className="text-[15px] font-semibold leading-relaxed pt-0.5">{answer.text}</span>
                 {showResult && answer.isCorrect && (
-                  <span className="ml-auto flex-shrink-0 text-[10px] font-bold text-emerald-400 uppercase tracking-widest pt-0.5">✓ Correct</span>
+                  <span className="ml-auto flex-shrink-0 text-xs font-bold text-emerald-400 uppercase tracking-widest pt-0.5">✓ Correct</span>
                 )}
                 {showResult && isSelected && !answer.isCorrect && (
-                  <span className="ml-auto flex-shrink-0 text-[10px] font-bold text-rose-400 uppercase tracking-widest pt-0.5">✗ Incorrect</span>
+                  <span className="ml-auto flex-shrink-0 text-xs font-bold text-rose-400 uppercase tracking-widest pt-0.5">✗ Incorrect</span>
                 )}
               </div>
             </button>
@@ -139,7 +139,7 @@ export default function ExamQuestion({ question, selectedAnswer, showResult, onA
 
       {showResult && (
         <div className="p-4 rounded-xl bg-blue-950/15 border border-blue-500/20 text-blue-200 space-y-1.5">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-blue-400">Tutor Explanation:</p>
+          <p className="text-xs font-bold uppercase tracking-wider text-blue-400">Tutor Explanation:</p>
           <p className="text-xs leading-relaxed font-medium">{question.explanation}</p>
         </div>
       )}

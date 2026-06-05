@@ -4,10 +4,11 @@ import { useEffect, useState } from "react"
 
 export default function ThemeToggle() {
   const [theme, setTheme] = useState<"light" | "dark">("dark")
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     const saved = localStorage.getItem("theme") as "light" | "dark" | null
-    // Default to dark for this specific exam prep tool if no preference is saved
     const initial = saved || "dark"
     
     setTheme(initial)
@@ -32,6 +33,12 @@ export default function ThemeToggle() {
       document.documentElement.classList.remove("dark")
       document.documentElement.classList.add("light")
     }
+  }
+
+  if (!mounted) {
+    return (
+      <div className="w-10 h-10 rounded-xl border border-black/5 dark:border-white/5 bg-slate-100 dark:bg-white/5" />
+    )
   }
 
   return (

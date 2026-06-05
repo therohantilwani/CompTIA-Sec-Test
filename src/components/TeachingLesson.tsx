@@ -173,19 +173,19 @@ Keep your response structured, concise (around 120-150 words), and formatted wit
               </div>
               
               <div className="p-3.5 bg-slate-950/50 rounded-xl border border-amber-500/10 shadow-inner">
-                <p className="text-[10px] font-bold text-amber-400 uppercase tracking-widest mb-1">📌 Key Lesson Takeaway</p>
+                <p className="text-xs font-bold text-amber-400 uppercase tracking-widest mb-1">📌 Key Lesson Takeaway</p>
                 <p className="text-xs text-amber-200 font-medium leading-relaxed">{lesson.keyConcept}</p>
               </div>
 
               {/* Related topics */}
               {lesson.relatedTopics && lesson.relatedTopics.length > 0 && (
                 <div className="space-y-1.5 border-b border-white/5 pb-4">
-                  <p className="text-[9px] font-bold text-amber-500/80 uppercase tracking-widest">Recommended Related Concepts:</p>
+                  <p className="text-[11px] font-bold text-amber-500/80 uppercase tracking-widest">Recommended Related Concepts:</p>
                   <div className="flex flex-wrap gap-1.5">
                     {lesson.relatedTopics.map((t) => (
                       <span
                         key={t}
-                        className="px-2.5 py-0.5 bg-slate-900 border border-amber-500/10 text-amber-300 rounded-full text-[9px] font-bold tracking-wide"
+                        className="px-2.5 py-0.5 bg-slate-900 border border-amber-500/10 text-amber-300 rounded-full text-[11px] font-bold tracking-wide"
                       >
                         {t}
                       </span>
@@ -197,10 +197,10 @@ Keep your response structured, concise (around 120-150 words), and formatted wit
               {/* Gemini API Key Configuration Panel */}
               {!apiKey ? (
                 <div className="p-3.5 bg-slate-950/50 border border-white/5 rounded-xl space-y-2">
-                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                  <p className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
                     🔑 Unlock Personal AI Tutor Explanations
                   </p>
-                  <p className="text-[10px] text-slate-500 leading-normal">
+                  <p className="text-xs text-slate-500 leading-normal font-semibold">
                     Enter a free Gemini API key to let the AI explain precisely why your selected wrong option is incorrect and why the correct one holds. Stored locally in your browser.
                   </p>
                   <div className="flex gap-2">
@@ -218,7 +218,7 @@ Keep your response structured, concise (around 120-150 words), and formatted wit
                       Save Key
                     </button>
                   </div>
-                  <p className="text-[9px] text-slate-500">
+                  <p className="text-[10px] text-slate-500 font-semibold">
                     No key?{" "}
                     <a
                       href="https://aistudio.google.com/"
@@ -231,11 +231,11 @@ Keep your response structured, concise (around 120-150 words), and formatted wit
                   </p>
                 </div>
               ) : (
-                <div className="flex items-center justify-between text-[9px] text-slate-500 pt-1">
+                <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1 font-semibold">
                   <span>🤖 AI Tutor Active (Gemini API Integration)</span>
                   <button
                     onClick={handleClearKey}
-                    className="hover:text-rose-400 transition-colors uppercase tracking-widest font-black cursor-pointer"
+                    className="hover:text-rose-450 transition-colors uppercase tracking-widest font-black cursor-pointer"
                   >
                     [Deactivate Key]
                   </button>
