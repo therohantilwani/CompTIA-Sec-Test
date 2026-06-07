@@ -247,6 +247,11 @@ export default function ExamPage() {
     localStorage.setItem("examAttempts", JSON.stringify(attempts.slice(0, 50)))
   }, [questions, answers])
 
+  const currentQuestion = questions[currentIndex]
+  const answeredCount = Object.keys(answers).length
+  const allAnswered = answeredCount === questions.length
+  const tooFewQuestions = !loading && questions.length < 10
+
   const handleTimeUp = useCallback(() => {
     if (!submitted) {
       alert("Time is up! Your exam will be submitted automatically.")
@@ -279,11 +284,6 @@ export default function ExamPage() {
 
     return () => clearInterval(timer)
   }, [mode, submitted, loading, tooFewQuestions, timeLeft, handleTimeUp])
-
-  const currentQuestion = questions[currentIndex]
-  const answeredCount = Object.keys(answers).length
-  const allAnswered = answeredCount === questions.length
-  const tooFewQuestions = !loading && questions.length < 10
 
   if (loading) {
     return (
