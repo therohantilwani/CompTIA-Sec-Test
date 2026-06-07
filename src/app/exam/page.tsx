@@ -8,6 +8,7 @@ import SpiderChart from "@/components/SpiderChart"
 import { Question } from "@/types"
 import Logo from "@/components/Logo"
 import ThemeToggle from "@/components/ThemeToggle"
+import ExamTimer from "@/components/ExamTimer"
 import { loadClientQuestions, fetchQuestionsFromInternet } from "@/lib/questions-loader"
 import { questionBank } from "@/lib/questions-bank"
 import { getPerformance, updatePerformance, getDomainAccuracy, getDomainStreak, getAnsweredCorrectIds, markAnsweredCorrect, markAnswered, getAllAnsweredIds, markTopicSeen } from "@/lib/performance"
@@ -42,6 +43,7 @@ export default function ExamPage() {
   const [showWeightage, setShowWeightage] = useState(false)
   const [showSpider, setShowSpider] = useState(false)
   const [mode, setMode] = useState<"exam" | "study">("study")
+  const [timeLeft, setTimeLeft] = useState<number | null>(null)
 
   // Reinforcement learning state
   const [reinforceQuestions, setReinforceQuestions] = useState<Question[]>([])
@@ -93,6 +95,7 @@ export default function ExamPage() {
       
       if (loaded.length === 0) throw new Error("No questions loaded")
       setQuestions(loaded)
+      setTimeLeft(90 * 60)
       prevDomainRef.current = loaded[0].domain
     } catch (e) {
       console.error("Failed to load questions:", e)
@@ -212,20 +215,20 @@ export default function ExamPage() {
     setSubmitted(true)
     let score = 0
     const domainMap: Record<string, { correct: number; total: number }> = {}
-    for (const [qId, answerId] of Object.entries(answers)) {
-      const question = questions.find((q) => q.id === qId)
-      if (question) {
-        if (!domainMap[question.domain]) domainMap[question.domain] = { correct: 0, total: 0 }
-        domainMap[question.domain].total++
-        if (question.answers.find((a) => a.id === answerId)?.isCorrect) {
-          score++
-          domainMap[question.domain].correct++
-        }
+    for (const question of questions) {
+      if (!domainMap[question.domain]) {
+        domainMap[question.domain] = { correct: 0, total: 0 }
+      }
+      domainMap[question.domain].total++
+      const answerId = answers[question.id]
+      if (answerId && question.answers.find((a) => a.id === answerId)?.isCorrect) {
+        score++
+        domainMap[question.domain].correct++
       }
     }
 
-    const total = Object.keys(answers).length
-    const percentage = Math.round((score / total) * 100)
+    const total = questions.length
+    const percentage = total > 0 ? Math.round((score / total) * 100) : 0
     const passed = percentage >= 75
     const domainResults = Object.entries(domainMap).map(([domain, stats]) => ({ domain, ...stats }))
 
@@ -243,6 +246,39 @@ export default function ExamPage() {
     })
     localStorage.setItem("examAttempts", JSON.stringify(attempts.slice(0, 50)))
   }, [questions, answers])
+
+  const handleTimeUp = useCallback(() => {
+    if (!submitted) {
+      alert("Time is up! Your exam will be submitted automatically.")
+      handleSubmit()
+    }
+  }, [submitted, handleSubmit])
+
+  // Timer countdown hook for Exam mode
+  useEffect(() => {
+    if (mode !== "exam" || submitted || loading || tooFewQuestions || timeLeft === null) {
+      return
+    }
+
+    if (timeLeft <= 0) {
+      setTimeout(() => handleTimeUp(), 0)
+      return
+    }
+
+    const timer = setInterval(() => {
+      setTimeLeft((t) => {
+        if (t === null) return null
+        if (t <= 1) {
+          clearInterval(timer)
+          setTimeout(() => handleTimeUp(), 0)
+          return 0
+        }
+        return t - 1
+      })
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [mode, submitted, loading, tooFewQuestions, timeLeft, handleTimeUp])
 
   const currentQuestion = questions[currentIndex]
   const answeredCount = Object.keys(answers).length
@@ -305,6 +341,10 @@ export default function ExamPage() {
               <span className="text-emerald-500 dark:text-emerald-400 font-bold">{answeredCount}</span>
               <span className="theme-text-muted">/{questions.length} answered</span>
             </div>
+
+            {mode === "exam" && !submitted && timeLeft !== null && (
+              <ExamTimer timeLeft={timeLeft} />
+            )}
 
             {/* Premium Sliding Toggle */}
             <div className="flex bg-slate-200 dark:bg-slate-950 rounded-lg p-0.5 text-xs font-bold border theme-border shadow-inner">
@@ -503,6 +543,7 @@ export default function ExamPage() {
                     if (loaded.length >= 10) {
                       setQuestions(loaded)
                       setCurrentIndex(0)
+                      setTimeLeft(90 * 60)
                     }
                   } catch {}
                   setLoading(false)

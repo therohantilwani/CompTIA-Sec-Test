@@ -1,24 +1,10 @@
 "use client"
 
-import { useState, useEffect } from "react"
-
 interface ExamTimerProps {
-  seconds: number
-  onTimeUp: () => void
+  timeLeft: number
 }
 
-export default function ExamTimer({ seconds, onTimeUp }: ExamTimerProps) {
-  const [timeLeft, setTimeLeft] = useState(seconds)
-
-  useEffect(() => {
-    if (timeLeft <= 0) {
-      onTimeUp()
-      return
-    }
-    const timer = setInterval(() => setTimeLeft((t) => t - 1), 1000)
-    return () => clearInterval(timer)
-  }, [timeLeft, onTimeUp])
-
+export default function ExamTimer({ timeLeft }: ExamTimerProps) {
   const minutes = Math.floor(timeLeft / 60)
   const secs = timeLeft % 60
 
