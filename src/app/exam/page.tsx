@@ -44,6 +44,7 @@ export default function ExamPage() {
   const [showSpider, setShowSpider] = useState(false)
   const [mode, setMode] = useState<"exam" | "study">("study")
   const [timeLeft, setTimeLeft] = useState<number | null>(null)
+  const [examStarted, setExamStarted] = useState(false)
 
   // Reinforcement learning state
   const [reinforceQuestions, setReinforceQuestions] = useState<Question[]>([])
@@ -261,7 +262,7 @@ export default function ExamPage() {
 
   // Timer countdown hook for Exam mode
   useEffect(() => {
-    if (mode !== "exam" || submitted || loading || tooFewQuestions || timeLeft === null) {
+    if (mode !== "exam" || !examStarted || submitted || loading || tooFewQuestions || timeLeft === null) {
       return
     }
 
@@ -283,7 +284,7 @@ export default function ExamPage() {
     }, 1000)
 
     return () => clearInterval(timer)
-  }, [mode, submitted, loading, tooFewQuestions, timeLeft, handleTimeUp])
+  }, [mode, examStarted, submitted, loading, tooFewQuestions, timeLeft, handleTimeUp])
 
   if (loading) {
     return (
@@ -342,7 +343,7 @@ export default function ExamPage() {
               <span className="theme-text-muted">/{questions.length} answered</span>
             </div>
 
-            {mode === "exam" && !submitted && timeLeft !== null && (
+            {mode === "exam" && examStarted && !submitted && timeLeft !== null && (
               <ExamTimer timeLeft={timeLeft} />
             )}
 
@@ -376,7 +377,7 @@ export default function ExamPage() {
         </div>
 
         {/* Dynamic Weightage Progress Tracking */}
-        {!submitted && (
+        {!submitted && (mode !== "exam" || examStarted) && (
           <div className="max-w-5xl mx-auto px-6 pb-2.5">
             <div className="flex gap-1 h-2 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-950 p-0.5 border theme-border">
               {weightageProgress.map((p) => {
@@ -430,7 +431,7 @@ export default function ExamPage() {
         )}
 
         {/* Question Selector List Grid */}
-        {!submitted && (
+        {!submitted && (mode !== "exam" || examStarted) && (
           <div className="max-w-5xl mx-auto px-6 pb-4 overflow-x-auto">
             <div className="flex gap-1.5 flex-nowrap min-w-max">
               {questions.map((q, i) => {
@@ -565,7 +566,7 @@ export default function ExamPage() {
           </div>
         )}
 
-        {!tooFewQuestions && !submitted && (
+        {!tooFewQuestions && !submitted && (mode !== "exam" || examStarted) && (
           <div className="space-y-6">
             <div className={`p-2.5 rounded-xl text-xs font-bold text-center border transition-colors ${
               mode === "study" ? "bg-indigo-950/20 text-indigo-300 border-indigo-500/20" : "bg-rose-950/20 text-rose-300 border-rose-500/20"
@@ -628,8 +629,41 @@ export default function ExamPage() {
           </div>
         )}
 
+        {!tooFewQuestions && !submitted && mode === "exam" && !examStarted && (
+          <div className="max-w-md mx-auto my-auto p-8 theme-card backdrop-blur-xl rounded-2xl text-center space-y-6 shadow-2xl border border-rose-500/20 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-[120px] h-[120px] bg-rose-500/5 rounded-full blur-2xl opacity-60 pointer-events-none" />
+            <div className="text-5xl animate-pulse">⏱️</div>
+            <div className="space-y-2">
+              <h2 className="text-xl font-black uppercase tracking-wider text-rose-600 dark:text-rose-455">Ready to Start?</h2>
+              <p className="text-[10px] font-mono theme-text-muted uppercase tracking-widest font-bold">SY0-701 Exam Simulation</p>
+            </div>
+            
+            <div className="text-xs theme-text-muted leading-relaxed font-semibold space-y-3.5 text-left p-5 bg-slate-50 dark:bg-slate-950/40 rounded-xl border theme-border">
+              <div className="flex items-center gap-2">
+                <span>📋</span>
+                <span><strong>Questions:</strong> {questions.length} total</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span>⏱️</span>
+                <span><strong>Time Limit:</strong> 90 Minutes</span>
+              </div>
+              <div className="flex items-center gap-2 text-rose-600 dark:text-rose-400">
+                <span>⚠️</span>
+                <span><strong>Strict Simulation:</strong> Results compile once submitted or time expires.</span>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setExamStarted(true)}
+              className="w-full py-3 bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-755 text-white rounded-xl text-xs font-bold shadow-lg shadow-rose-900/20 hover:scale-105 active:scale-95 transition-all cursor-pointer"
+            >
+              Begin Exam
+            </button>
+          </div>
+        )}
+
         {/* Footer controls for navigation */}
-        {!tooFewQuestions && !submitted && (
+        {!tooFewQuestions && !submitted && (mode !== "exam" || examStarted) && (
           <div className="mt-8 flex items-center justify-between">
             <div className="flex gap-3">
               <button
